@@ -1,0 +1,219 @@
+============================================================
+  SUPERSTORE SALES DASHBOARD — ALL DAX MEASURES
+  Power BI Capstone Project
+============================================================
+
+--------------------------------------------------------------
+STEP 1: LOAD DATA
+--------------------------------------------------------------
+Home → Get Data → Text/CSV → select SuperStore_Sales_Dataset.csv → Load
+
+--------------------------------------------------------------
+STEP 2: TRANSFORM DATA (Power Query)
+--------------------------------------------------------------
+1. Click Transform Data
+2. Select "Order Date" column → Change Type → Date
+3. Select "Ship Date" column → Change Type → Date
+4. Select "Sales" column → Change Type → Decimal Number
+5. Select "Profit" column → Change Type → Decimal Number
+6. Click Close & Apply
+
+--------------------------------------------------------------
+STEP 3: CALCULATED COLUMNS
+--------------------------------------------------------------
+Go to Data View → select SuperStore_Sales_Dataset table → New Column
+
+-- 1. Order Month (for line chart)
+Order Month = FORMAT('SuperStore_Sales_Dataset'[Order Date], "MMMM")
+
+-- 2. Order Month Number (for correct sorting)
+Order Month Num = MONTH('SuperStore_Sales_Dataset'[Order Date])
+
+-- 3. Order Year
+Order Year = YEAR('SuperStore_Sales_Dataset'[Order Date])
+
+-- 4. Ship Days (days to deliver)
+Ship Days = 
+DATEDIFF(
+    'SuperStore_Sales_Dataset'[Order Date],
+    'SuperStore_Sales_Dataset'[Ship Date],
+    DAY
+)
+
+--------------------------------------------------------------
+STEP 4: SORT MONTH CORRECTLY
+--------------------------------------------------------------
+1. Click on "Order Month" column in Data view
+2. Go to Column Tools (top ribbon)
+3. Click "Sort by Column"
+4. Select "Order Month Num"
+(This makes Jan, Feb, Mar... appear in correct order on charts)
+
+--------------------------------------------------------------
+STEP 5: CREATE MEASURES TABLE
+--------------------------------------------------------------
+Home → Enter Data → name it "Measures" → Load
+
+Then right-click "Measures" table → New Measure → paste each:
+
+-- 1. Total Sales
+Total Sales = SUM('SuperStore_Sales_Dataset'[Sales])
+
+-- 2. Total Profit
+Total Profit = SUM('SuperStore_Sales_Dataset'[Profit])
+
+-- 3. Total Orders
+Total Orders = DISTINCTCOUNT('SuperStore_Sales_Dataset'[Order ID])
+
+-- 4. Total Quantity
+Total Quantity = SUM('SuperStore_Sales_Dataset'[Quantity])
+
+-- 5. Average Ship Days
+Avg Ship Days = AVERAGE('SuperStore_Sales_Dataset'[Ship Days])
+
+-- 6. Profit Margin %
+Profit Margin = DIVIDE([Total Profit], [Total Sales], 0)
+
+-- 7. Average Order Value
+Avg Order Value = DIVIDE([Total Sales], [Total Orders], 0)
+
+--------------------------------------------------------------
+STEP 6: PAGE 1 VISUALS — "Super Store Sales Dashboard"
+--------------------------------------------------------------
+
+BACKGROUND: Set canvas background to gradient blue
+  View → Format Page → Canvas Background → color #1E3A5F
+
+VISUALS TO ADD:
+
+1. TEXT BOX (Title)
+   → Insert → Text Box
+   → Type: "Super Store Sales Dashboard"
+   → Font: 24px, Bold, White
+
+2. SLICER (Region buttons at top)
+   → Slicer visual
+   → Field: Region
+   → Format → Slicer settings → Style: Tile
+
+3. KPI CARD — Sales
+   → Card visual → field: Total Sales
+   → Title: "Sales"
+
+4. KPI CARD — Orders
+   → Card visual → field: Total Orders
+   → Title: "Orders"
+
+5. KPI CARD — Profits
+   → Card visual → field: Total Profit
+   → Title: "Profits"
+
+6. KPI CARD — Ship Days
+   → Card visual → field: Avg Ship Days
+   → Title: "Ship Days"
+
+7. DONUT CHART — Sales by Region
+   → Donut chart
+   → Legend: Region
+   → Values: Total Sales
+   → Title: "Sum of Sales by Region"
+
+8. DONUT CHART — Sales by Segment
+   → Donut chart
+   → Legend: Segment
+   → Values: Total Sales
+   → Title: "Sum of Sales by Segment"
+
+9. DONUT CHART — Sales by Payment Mode
+   → Donut chart
+   → Legend: Payment Mode
+   → Values: Total Sales
+   → Title: "Sum of Sales by Payment Mode"
+
+10. AREA CHART — Monthly Sales YoY
+    → Area chart
+    → X-axis: Order Month
+    → Y-axis: Total Sales
+    → Legend: Order Year
+    → Title: "Monthly Sales by YoY"
+
+11. AREA CHART — Monthly Orders YoY
+    → Area chart
+    → X-axis: Order Month
+    → Y-axis: Total Orders
+    → Legend: Order Year
+    → Title: "Monthly Orders by YoY"
+
+12. BAR CHART — Sales by Ship Mode
+    → Clustered Bar Chart
+    → Y-axis: Ship Mode
+    → X-axis: Total Sales
+    → Title: "Sales by Ship Mode"
+
+13. BAR CHART — Sales by Category
+    → Clustered Bar Chart
+    → Y-axis: Category
+    → X-axis: Total Sales
+    → Title: "Sales by Category"
+
+14. BAR CHART — Sales by SubCategory
+    → Clustered Bar Chart
+    → Y-axis: Sub-Category
+    → X-axis: Total Sales
+    → Title: "Sales by SubCategory"
+
+15. MAP VISUAL — Sales & Profit by State
+    → Map visual
+    → Location: State
+    → Bubble size: Total Sales
+    → Title: "Sum of Sales and Sum of Profit by State"
+
+--------------------------------------------------------------
+STEP 7: PAGE 2 VISUALS — "Sales Forecast - 15 Days"
+--------------------------------------------------------------
+
+1. TEXT BOX (Title)
+   → "Super Store Sales Forecast - 15 Days Forecast"
+
+2. LINE CHART — Sales Forecast (full history)
+   → Line chart
+   → X-axis: Order Date
+   → Y-axis: Total Sales
+   → Title: "Sales forecast - 15 days"
+   → Then: Click the chart → Analytics pane (magnifier icon)
+   → Turn ON "Forecast" → set periods to 15 → confidence 95%
+
+3. LINE CHART — Sales Forecast (zoomed, last 6 months)
+   → Duplicate the above chart
+   → Add a zoom slider: Format → Zoom Slider → ON
+   → Drag slider to show last 6 months with forecast
+
+4. BAR CHART — Sales by State
+   → Clustered Bar Chart
+   → Y-axis: State
+   → X-axis: Total Sales
+   → Title: "Sales by State"
+   → Filters: Show Top 10 states only
+     (Visual Filters → Top N → 10 → by Total Sales)
+
+--------------------------------------------------------------
+STEP 8: FORMAT ALL VISUALS (Blue Theme)
+--------------------------------------------------------------
+For each visual:
+1. Click the visual
+2. Format Visual → Visual → Background → ON → color #1E3A5F or #163455
+3. Title → color White, font size 12-14
+4. Data labels → ON, color White
+5. Axis labels → color White or light grey
+
+--------------------------------------------------------------
+KEY TIPS
+--------------------------------------------------------------
+- To add forecast: Click line chart → Analytics pane (magnifier icon on right) → Forecast → toggle ON → Periods = 15
+- To set Top N filter on bar chart: Filters pane → Visual Filters → field → Filter type: Top N
+- To sync slicers across pages: View → Sync Slicers → check both pages
+- Save file as: SuperStore_Sales_Dashboard.pbix
+
+============================================================
+END OF DAX & STEPS FILE
+============================================================
