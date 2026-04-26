@@ -1,0 +1,118 @@
+SuperStore Sales Dashboard — DAX & Build Notes
+
+This document contains the steps and DAX calculations I used while building my Power BI dashboard.
+
+--------------------------------------------------
+
+1. Data Loading
+
+Started by importing the dataset:
+
+- Home → Get Data → CSV  
+- Selected SuperStore_Sales_Dataset.csv and loaded it  
+
+--------------------------------------------------
+
+2. Data Preparation (Power Query)
+
+Before building visuals, I cleaned the data:
+
+- Converted Order Date and Ship Date into Date format  
+- Changed Sales and Profit into decimal numbers  
+- Checked for any obvious issues (data looked clean overall)  
+
+Then applied changes.
+
+--------------------------------------------------
+
+3. Calculated Columns
+
+Order Month
+Order Month = FORMAT('SuperStore_Sales_Dataset'[Order Date], "MMMM")
+
+Month Number (for sorting)
+Order Month Num = MONTH('SuperStore_Sales_Dataset'[Order Date])
+
+Order Year
+Order Year = YEAR('SuperStore_Sales_Dataset'[Order Date])
+
+Shipping Days
+Ship Days =
+DATEDIFF(
+    'SuperStore_Sales_Dataset'[Order Date],
+    'SuperStore_Sales_Dataset'[Ship Date],
+    DAY
+)
+
+Note: Sorted Order Month using Order Month Num so months appear correctly.
+
+--------------------------------------------------
+
+4. Measures (Main KPIs)
+
+Total Sales
+Total Sales = SUM('SuperStore_Sales_Dataset'[Sales])
+
+Total Profit
+Total Profit = SUM('SuperStore_Sales_Dataset'[Profit])
+
+Total Orders
+Total Orders = DISTINCTCOUNT('SuperStore_Sales_Dataset'[Order ID])
+
+Total Quantity
+Total Quantity = SUM('SuperStore_Sales_Dataset'[Quantity])
+
+--------------------------------------------------
+
+5. Additional Metrics
+
+Average Shipping Days
+Avg Ship Days = AVERAGE('SuperStore_Sales_Dataset'[Ship Days])
+
+Profit Margin
+Profit Margin = DIVIDE([Total Profit], [Total Sales], 0)
+
+Average Order Value
+Avg Order Value = DIVIDE([Total Sales], [Total Orders], 0)
+
+--------------------------------------------------
+
+6. Dashboard Design (Page 1)
+
+- Added KPI cards → Sales, Orders, Profit, Ship Days  
+- Used donut charts for region, segment, and payment mode  
+- Added Monthly Sales and Orders (YoY) trends  
+- Bar charts for Category, Sub-category, and Ship Mode  
+- Map for state-wise sales  
+
+--------------------------------------------------
+
+7. Forecasting (Page 2)
+
+- Line chart: Order Date vs Sales  
+- Enabled 15-day forecast from Analytics pane  
+- Created zoomed view for recent months  
+- Added Top 10 states bar chart  
+
+--------------------------------------------------
+
+8. Design Choices
+
+- Used dark blue theme  
+- Kept visuals clean and readable  
+- Avoided clutter  
+
+--------------------------------------------------
+
+Notes
+
+- Profit Margin shows business efficiency  
+- Ship Days helps track delivery performance  
+- Month sorting was important for trends  
+- Forecasting adds future insight  
+
+--------------------------------------------------
+
+Final Thought
+
+Focused on keeping the dashboard simple, clear, and useful for decision-making.
